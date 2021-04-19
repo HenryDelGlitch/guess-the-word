@@ -7,10 +7,19 @@ const remainingGuessesSpan = document.querySelector(".remaining span");
 const message = document.querySelector(".message");
 const playAgain = document.querySelector(".play-again");
 
-const word = "magnolia";
+let word = "magnolia";
 const guessedLetterArray = [];
 
-const remainingGuesses = 8;
+let remainingTries = 8;
+
+const getWord = async function(){
+    const words = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
+    const rec = await words.text();
+    const wordArray = rec.split("\n");
+    const randomIndex = Math.floor(Math.random() * wordArray.length);
+    word = wordArray[randomIndex].trim();
+    hiddenWord(word);
+};
 
 // Hide the words with circle symbols
 const hiddenWord = function (word) {
@@ -21,9 +30,7 @@ const hiddenWord = function (word) {
   wordIP.innerText = placeholderLetters.join("");
 };
 
-//Calls hiddenWord function
-
-hiddenWord(word);
+getWord();
 
 //Event Listener for the Guess Button
 //Calls validate Input Function
@@ -70,6 +77,7 @@ const makeGuess = function (letter) {
   } else {
     guessedLetterArray.push(letter);
     showGuessedLetters();
+    guessesRemaining(letter);
     updateWordsIP(guessedLetterArray);
   }
 };
@@ -101,6 +109,26 @@ const updateWordsIP = function (guessedLetterArray) {
   wordIP.innerText = revealWord.join("");
   //Check if all the letters are revealed
   checkIfWin();
+};
+
+const guessesRemaining = function(guess){
+    const upperWord = word.toUpperCase();
+
+    if(!upperWord.includes(guess)){
+        message.innerText = "That's not included!";
+        remainingTries -= 1;
+    }else{
+        message.innerText = "Nice Guess!";
+    }
+
+    if(remainingTries === 0){
+        message.innerHTML = `Game over! The word was <span class="highlight">${word}</span>.`;
+        remainingGuessesSpan.innerText = `${remainingTries} guess`;
+    }else if(remainingTries === 1){
+        remainingGuessesSpan.innerText = `${remainingTries} guess`;
+    }else{
+        remainingGuessesSpan.innerText = `${remainingTries} guesses`;
+    }
 };
 
 //If player has guessed all letters then show them!
