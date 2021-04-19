@@ -10,6 +10,8 @@ const playAgain = document.querySelector(".play-again");
 const word = "magnolia";
 const guessedLetterArray = [];
 
+const remainingGuesses = 8;
+
 // Hide the words with circle symbols
 const hiddenWord = function (word) {
   const placeholderLetters = [];
@@ -19,8 +21,14 @@ const hiddenWord = function (word) {
   wordIP.innerText = placeholderLetters.join("");
 };
 
+//Calls hiddenWord function
+
 hiddenWord(word);
 
+//Event Listener for the Guess Button
+//Calls validate Input Function
+//Calls Good Guess Function
+//Calls makesGuess function
 guess.addEventListener("click", function (e) {
   e.preventDefault();
   // Empty message 
@@ -37,6 +45,7 @@ guess.addEventListener("click", function (e) {
   userGuess.value = "";
 });
 
+//Validate the input to see if it has one value
 const validateInput = function (input) {
   const acceptedLetter = /[a-zA-Z]/;
   if (input.length === 0) {
@@ -50,18 +59,22 @@ const validateInput = function (input) {
   }
 };
 
+//Makes letter uppercase
+//If they already guess that letter tell them they have done it before
+//Else Push that letter then call showGuessedLetters function
+//Call updateWords
 const makeGuess = function (letter) {
   letter = letter.toUpperCase();
   if (guessedLetterArray.includes(letter)) {
     message.innerText = "You already guessed that letter, silly. Try again.";
   } else {
     guessedLetterArray.push(letter);
-    console.log(guessedLetterArray);
     showGuessedLetters();
     updateWordsIP(guessedLetterArray);
   }
 };
 
+//Update the lists with the guessedLetters
 const showGuessedLetters = function () {
   guessedLetters.innerHTML = "";
   for (const letter of guessedLetterArray) {
@@ -90,6 +103,7 @@ const updateWordsIP = function (guessedLetterArray) {
   checkIfWin();
 };
 
+//If player has guessed all letters then show them!
 const checkIfWin = function () {
   if (word.toUpperCase() === wordIP.innerText) {
     message.classList.add("win");
